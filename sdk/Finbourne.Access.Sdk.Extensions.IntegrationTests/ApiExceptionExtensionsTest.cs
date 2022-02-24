@@ -24,8 +24,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
         {
             try
             {
-                //TODO: Test with a valid API Method
-                //_factory.Api<Api.xxxApi>().Methodxxx("$@!-");
+                _factory.Api<RolesApi>().GetRole("$@!-");
             }
             catch (ApiException e)
             {
@@ -38,8 +37,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
         {
             try
             {
-                //TODO: Test with a valid API Method
-                //_factory.Api<Api.xxxApi>().Methodxxx("$@!-");
+                _factory.Api<RolesApi>().GetRole("$@!-");
             }
             catch (ApiException e)
             {
@@ -63,14 +61,13 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
         {
             try
             {
-                //TODO: Test with a valid API Method
-                //_factory.Api<Api.xxxApi>().Methodxxx("$@!-");
+                _factory.Api<RolesApi>().GetRole("code_$@!-", scope: "scope_$@!-");
             }
             catch (ApiException e)
             {
                 //    ApiException.ErrorContent contains a JSON serialized ErrorResponse
                 LusidProblemDetails errorResponse = e.ProblemDetails();
-                Assert.That(errorResponse.Detail, Does.Match("One or more elements of the request were invalid. Please check that all supplied identifiers are valid and of the correct format, and that all provided data is correctly structured."));
+                Assert.That(errorResponse.Detail, Does.Match("One or more of the bits of input data provided were not valid.*"));
             }
         }
 
@@ -79,14 +76,13 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
         {
             try
             {
-                //TODO: Test with a valid API Method
-                //_factory.Api<Api.xxxApi>().Methodxxx("no-scope", "no-code", someObject);
+                _factory.Api<RolesApi>().GetRole("not_found_code", scope: "not_found_scope");
             }
             catch (ApiException e)
             {
                 //    ApiException.ErrorContent contains a JSON serialized ErrorResponse
                 LusidProblemDetails errorResponse = e.ProblemDetails();
-                Assert.That(errorResponse.Name, Is.EqualTo("SubscriptionNotFound"));
+                Assert.That(errorResponse.Name, Is.EqualTo("RoleDoesNotExist"));
             }
         }
 
@@ -95,8 +91,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
         {
             try
             {
-                //TODO: Test with a valid API Method
-                //_factory.Api<Api.xxxApi>().Methodxxx("@£$@£%", "#####", someObject);
+                _factory.Api<RolesApi>().GetRole("$@!-", scope: "*****");
             }
             catch (ApiException e)
             {
@@ -109,14 +104,14 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
                 {
                     //Should identify that there was a validation error with the code
                     Assert.That(errorResponse.Errors, Contains.Key("code"));
-                    Assert.That(errorResponse.Errors["code"].Single(), Is.EqualTo("Values for the field code must be comprised of either alphanumeric characters, hyphens or underscores. For more information please consult the documentation."));
+                    Assert.That(errorResponse.Errors["code"].Single(), Is.EqualTo("Values for this field must be non-zero in length and be comprised of either alphanumeric characters, hyphens or underscores. For more information please consult the LUSID documentation."));
 
                     //Should identify that there was a validation error with the scope
                     Assert.That(errorResponse.Errors, Contains.Key("scope"));
-                    Assert.That(errorResponse.Errors["scope"].Single(), Is.EqualTo("Values for the field scope must be comprised of either alphanumeric characters, hyphens or underscores. For more information please consult the documentation."));
+                    Assert.That(errorResponse.Errors["scope"].Single(), Is.EqualTo("Values for this field must be non-zero in length and be comprised of either alphanumeric characters, hyphens or underscores. For more information please consult the LUSID documentation."));
 
-                    Assert.That(errorResponse.Detail, Does.Match("One or more elements of the request were invalid.*"));
-                    Assert.That(errorResponse.Name, Is.EqualTo("InvalidRequestFailure"));
+                    Assert.That(errorResponse.Detail, Does.Match("One or more of the bits of input data provided were not valid.*"));
+                    Assert.That(errorResponse.Name, Is.EqualTo("InvalidParameterValue"));
                 }
                 else
                 {
@@ -130,10 +125,9 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
         {
             try
             {
-                var testScope = new string('a', 100);
-                var testCode = new string('b', 100);
-                //TODO: Test with a valid API Method
-                //_factory.Api<Api.xxxApi>().Methodxxx(testScope, testCode, someObject);
+                var testScope = new string('a', 1000);
+                var testCode = new string('b', 1000);
+                _factory.Api<RolesApi>().GetRole(testCode, scope: testScope);
             }
             catch (ApiException e)
             {
@@ -144,14 +138,14 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
                 {
                     //Should identify that there was a validation error with the code
                     Assert.That(errorResponse.Errors, Contains.Key("code"));
-                    Assert.That(errorResponse.Errors["code"].Single(), Is.EqualTo("Values for the field code must be non-zero in length and have no more than 64 characters. For more information please consult the documentation."));
+                    Assert.That(errorResponse.Errors["code"].Single(), Is.EqualTo("Supplied text value was too long to be valid"));
 
                     //Should identify that there was a validation error with the scope
                     Assert.That(errorResponse.Errors, Contains.Key("scope"));
-                    Assert.That(errorResponse.Errors["scope"].Single(), Is.EqualTo("Values for the field scope must be non-zero in length and have no more than 64 characters. For more information please consult the documentation."));
+                    Assert.That(errorResponse.Errors["scope"].Single(), Is.EqualTo("Supplied text value was too long to be valid"));
 
-                    Assert.That(errorResponse.Detail, Does.Match("One or more elements of the request were invalid.*"));
-                    Assert.That(errorResponse.Name, Is.EqualTo("InvalidRequestFailure"));
+                    Assert.That(errorResponse.Detail, Does.Match("One or more of the bits of input data provided were not valid.*"));
+                    Assert.That(errorResponse.Name, Is.EqualTo("InvalidParameterValue"));
                 }
                 else
                 {
