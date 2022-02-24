@@ -16,42 +16,29 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             _factory = IntegrationTestApiFactoryBuilder.CreateApiFactory("secrets.json");
         }
 
+        /* Add this test for each Api within Finbourne.Access.Sdk.Api
         [Test]
-        public void Create_ApplicationMetadataApi()
+        public void Create_XXXApi()
         {
-            var api = _factory.Api<ApplicationMetadataApi>();
+            var api = _factory.Api<XXXApi>();
 
             Assert.That(api, Is.Not.Null);
-            Assert.That(api, Is.InstanceOf<ApplicationMetadataApi>());
+            Assert.That(api, Is.InstanceOf<XXXApi>());
         }
+        */
 
-        [Test]
-        public void Create_PoliciesApi()
-        {
-            var api = _factory.Api<PoliciesApi>();
-
-            Assert.That(api, Is.Not.Null);
-            Assert.That(api, Is.InstanceOf<PoliciesApi>());
-        }
-
-        [Test]
-        public void Create_RolesApi()
-        {
-            var api = _factory.Api<RolesApi>();
-
-            Assert.That(api, Is.Not.Null);
-            Assert.That(api, Is.InstanceOf<RolesApi>());
-        }
-
+        /* Add this test for and interface of an Api within Finbourne.Access.Sdk.Api
         [Test]
         public void Api_From_Interface()
         {
-            var api = _factory.Api<IRolesApi>();
+            var api = _factory.Api<IXXXApi>();
 
             Assert.That(api, Is.Not.Null);
-            Assert.That(api, Is.InstanceOf<IRolesApi>());
+            Assert.That(api, Is.InstanceOf<IXXXApi>());
         }
+        */
 
+        /* Add this test for and interface of an Api within Finbourne.Access.Sdk.Api
         [Test]
         public void NetworkConnectivityErrors_ThrowsException()
         {
@@ -60,24 +47,25 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             apiConfig.ApiUrl = "https://localhost:56789/insights"; 
 
             var factory = new ApiFactory(apiConfig);
-            var api = factory.Api<RolesApi>();
+            var api = factory.Api<IXXXApi>();
 
             // Can't be more specific as we get different exceptions locally vs in the build pipeline
-            var expectedMsg = "Internal SDK error occurred when calling GetRole";
+            var expectedMsg = "Internal SDK error occurred when calling GetVendorResponse";
 
             Assert.That(
-                () => api.GetRoleWithHttpInfo("$@!-", scope: "*****"),
+                () => api.GetxxxApiMethodxxxWithHttpInfo("$@!-"),
                 Throws.InstanceOf<ApiException>()
                     .With.Message.Contains(expectedMsg));
 
             // Note: these non-"WithHttpInfo" methods just unwrap the `Data` property from the call above.
             // But these were the problematic ones, as they would previously just return a null value in this scenario.
             Assert.That(
-                () => api.GetRole("$@!-", scope: "*****"),
+                () => api.GetxxxApiMethodxxx("$@!-"),
                 Throws.InstanceOf<ApiException>()
                     .With.Message.Contains(expectedMsg));
         }
-        
+        */
+
         [Test]
         public void Invalid_Requested_Api_Throws()
         {

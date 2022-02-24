@@ -24,11 +24,10 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
         private const string ListenerUriPrefix = "http://localhost:4444/";
         private int _apiCallCount;
 
-        private readonly RoleResponse _mockResponse = new RoleResponse(new RoleId("scope","code"), 0, "description", 
-                                                                    new RoleResourceRequest(new NonTransitiveSupervisorRoleResource(new List<Dictionary<string, string>>()),new PolicyIdRoleResource(new List<PolicyId>(),new List<PolicyCollectionId>())), 
-                                                                    new WhenSpec(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1)), 
-                                                                    "permission", 
-                                                                    new Dictionary<string, string>(), new List<Link>());   
+        /*This needs to be an object that a method in the Finbourne.Access.Sdk.Api will return - This example is from Insights
+        private readonly VendorResponse _mockResponse = new VendorResponse("id", "response", 
+            new List<Link> { new Link("relation", "href", "description", "method")});   
+        */
 
         [SetUp]
         public void SetUp()
@@ -47,6 +46,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
         }
 
         #region Sync tests
+        /*
         [Test]
         public void CallApiMethod_WhenHttpStatusIs400AndRetryConditionIsNotSatisfied_ThrowsApiExceptionWithoutRetry()
         {
@@ -63,7 +63,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             RetryConfiguration.RetryPolicy = PollyApiRetryHandler.DefaultRetryPolicyWithFallback;
 
             var exception = Assert.Throws<ApiException>(
-                () => _apiFactory.Api<IRolesApi>().GetRole("code", scope:"scope")
+                () => _apiFactory.Api<IxxxApi>().GetApiMethodxxx("any")
             );
 
             Assert.That(exception.ErrorContent, Is.EqualTo(someError));
@@ -86,7 +86,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
 
             RetryConfiguration.RetryPolicy = PollyApiRetryHandler.DefaultRetryPolicyWithFallback;
 
-            var sdkResponse = _apiFactory.Api<IRolesApi>().GetRole("code", DateTimeOffset.UtcNow.AddDays(-1), "scope");
+            var sdkResponse = _apiFactory.Api<IxxxApi>().GetApiMethodxxx("any");
 
             // Api call should be just called once
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
@@ -109,9 +109,9 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
 
             RetryConfiguration.RetryPolicy = PollyApiRetryHandler.DefaultRetryPolicyWithFallback;
 
-            // Calling GetRole or any other API triggers the flow that triggers polly
+            // Calling GetApiMethodxxx or any other API triggers the flow that triggers polly
             var exception = Assert.Throws<ApiException>(
-                () => _apiFactory.Api<IRolesApi>().GetRole("code", scope:"scope")
+                () => _apiFactory.Api<IxxxApi>().GetApiMethodxxx("any")
             );
 
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
@@ -132,8 +132,8 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             }
             RetryConfiguration.RetryPolicy = PollyApiRetryHandler.DefaultRetryPolicy; // No fallback
 
-            // Calling GetRole or any other API triggers the flow that triggers polly
-            var response = _apiFactory.Api<IRolesApi>().GetRole("code", scope:"scope");
+            // Calling GetApiMethodxxx or any other API triggers the flow that triggers polly
+            var response = _apiFactory.Api<IxxxApi>().GetApiMethodxxx("any");
 
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
             Assert.That(response, Is.Null);
@@ -153,8 +153,8 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             AddMockHttpResponseToQueue(_httpListener, statusCode: 200, responseContent: _mockResponse.ToJson());
             RetryConfiguration.RetryPolicy = PollyApiRetryHandler.DefaultRetryPolicyWithFallback;
 
-            // Calling GetRole or any other API triggers the flow that triggers polly
-            var sdkResponse = _apiFactory.Api<IRolesApi>().GetRole("code", scope:"scope");
+            // Calling GetApiMethodxxx or any other API triggers the flow that triggers polly
+            var sdkResponse = _apiFactory.Api<IxxxApi>().GetApiMethodxxx("any");
 
             Assert.That(sdkResponse, Is.EqualTo(_mockResponse));
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
@@ -184,8 +184,8 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
                         retryCount++;
                     });
 
-            // Calling GetRole or any other API triggers the flow that triggers polly
-            var sdkResponse = _apiFactory.Api<IRolesApi>().GetRole("code", scope:"scope");
+            // Calling GetApiMethodxxx or any other API triggers the flow that triggers polly
+            var sdkResponse = _apiFactory.Api<IxxxApi>().GetApiMethodxxx("any");
 
             Assert.That(retryCount, Is.EqualTo(expectedNumberOfRetries));
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
@@ -224,11 +224,11 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
                 );
 
             var exception = Assert.Throws<ApiException>(
-                () => _apiFactory.Api<IRolesApi>().GetRole("code", scope:"scope"));
+                () => _apiFactory.Api<IxxxApi>().GetApiMethodxxx("any"));
 
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
             Assert.That(exception.ErrorCode, Is.EqualTo(0));
-       Assert.That(exception.Message, Contains.Substring("Internal SDK error occurred when calling GetRole: An error occurred while sending the request"));
+       Assert.That(exception.Message, Contains.Substring("Internal SDK error occurred when calling GetApiMethodxxx: An error occurred while sending the request"));
         }
 
         [Test]
@@ -255,8 +255,8 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
                 .Retry(retryCount: 3, onRetry: (result, i) => policy2TriggerCount++);
             RetryConfiguration.RetryPolicy = policy1.Wrap(policy2);
 
-            // Calling GetRole or any other API triggers the flow that triggers polly
-            var sdkResponse = _apiFactory.Api<IRolesApi>().GetRole("code", scope:"scope");
+            // Calling GetApiMethodxxx or any other API triggers the flow that triggers polly
+            var sdkResponse = _apiFactory.Api<IxxxApi>().GetApiMethodxxx("any");
 
             Assert.That(policy1TriggerCount, Is.EqualTo(2));
             Assert.That(policy2TriggerCount, Is.EqualTo(1));
@@ -279,10 +279,10 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
                 timeoutAfterMillis + 10);
             RetryConfiguration.RetryPolicy = PollyApiRetryHandler.DefaultRetryPolicyWithFallback;
 
-            // Calling GetRole or any other API triggers the flow that triggers polly
+            // Calling GetApiMethodxxx or any other API triggers the flow that triggers polly
 
             var exception = Assert.Throws<ApiException>(
-                () => _apiFactory.Api<IRolesApi>().GetRole("code", scope:"scope"));
+                () => _apiFactory.Api<IxxxApi>().GetApiMethodxxx("any"));
 
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
             // Notice that Sync throws different error message than async
@@ -290,9 +290,11 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             Assert.That(exception.ErrorCode, Is.EqualTo(0));
 
        }
+       */
        #endregion
 
         #region Async tests
+        /*
         [Test]
         public async Task CallApiMethodAsync_WhenHttpStatusIs200AndRetryConditionIsNotSatisfied_NoPollyRetryIsTriggered()
         {
@@ -307,7 +309,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
 
             RetryConfiguration.AsyncRetryPolicy = PollyApiRetryHandler.DefaultRetryPolicyWithFallbackAsync;
 
-            var sdkResponse = await _apiFactory.Api<IRolesApi>().GetRoleAsync("code", scope:"scope");
+            var sdkResponse = await _apiFactory.Api<IxxxApi>().GetApiMethodxxxAsync("any");
 
             // Api call should be just called once
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
@@ -328,8 +330,8 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             AddMockHttpResponseToQueue(_httpListener, statusCode: 200, responseContent: _mockResponse.ToJson());
             RetryConfiguration.RetryPolicy = PollyApiRetryHandler.DefaultRetryPolicyWithFallback;
 
-            // Calling GetRoleAsync or any other API triggers the flow that triggers polly
-            var sdkResponse = await _apiFactory.Api<IRolesApi>().GetRoleAsync("code", scope: "scope");
+            // Calling GetApiMethodxxxAsync or any other API triggers the flow that triggers polly
+            var sdkResponse = await _apiFactory.Api<IxxxApi>().GetApiMethodxxxAsync("any");
 
             Assert.That(sdkResponse, Is.EqualTo(_mockResponse));
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
@@ -350,9 +352,9 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
 
             // Calling API triggers the flow that triggers polly
             var exception = Assert.ThrowsAsync<ApiException>(
-                 () => _apiFactory.Api<IRolesApi>().GetRoleAsync("code", scope: "scope"));
+                 () => _apiFactory.Api<IxxxApi>().GetApiMethodxxxAsync("any"));
 
-            Assert.That(exception.Message, Is.EqualTo($"Error calling GetRole: {expectedErrorResponse}"));
+            Assert.That(exception.Message, Is.EqualTo($"Error calling GetApiMethodxxx: {expectedErrorResponse}"));
             Assert.That(exception.ErrorCode, Is.EqualTo(returnedStatusCode));
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
         }
@@ -370,8 +372,8 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             }
             RetryConfiguration.AsyncRetryPolicy = PollyApiRetryHandler.DefaultRetryPolicyAsync; // No fallback
 
-            // Calling GetRoleAsync or any other API triggers the flow that triggers polly
-            var response = await _apiFactory.Api<IRolesApi>().GetRoleAsync("code", scope: "scope");
+            // Calling GetApiMethodxxxAsync or any other API triggers the flow that triggers polly
+            var response = await _apiFactory.Api<IxxxApi>().GetApiMethodxxxAsync("any");
 
             // Policies with no fallback return null
             Assert.That(response, Is.Null);
@@ -409,9 +411,9 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             );
 
 
-            // Calling GetRoleAsync or any other API triggers the flow that triggers polly
+            // Calling GetApiMethodxxxAsync or any other API triggers the flow that triggers polly
             var exception = Assert.ThrowsAsync<ApiException>(
-                () => _apiFactory.Api<IRolesApi>().GetRoleAsync("code", scope: "scope"));
+                () => _apiFactory.Api<IxxxApi>().GetApiMethodxxxAsync("any"));
 
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
             Assert.That(exception.ErrorCode, Is.EqualTo(0));
@@ -433,13 +435,14 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             RetryConfiguration.AsyncRetryPolicy = PollyApiRetryHandler.DefaultRetryPolicyWithFallbackAsync;
 
             var exception = Assert.ThrowsAsync<ApiException>(
-                () => _apiFactory.Api<IRolesApi>().GetRoleAsync("code", scope: "scope"));
+                () => _apiFactory.Api<IxxxApi>().GetApiMethodxxxAsync("any"));
 
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
             // Notice that Async throws different error message than Sync
             Assert.That(exception.ErrorContent, Contains.Substring("The request timed-out"));
             Assert.That(exception.ErrorCode, Is.EqualTo(0));
         }
+        */
         #endregion
 
         [TearDown]
