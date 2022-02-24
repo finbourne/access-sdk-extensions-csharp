@@ -5,9 +5,9 @@
     <IsPackable>false</IsPackable>
     <Authors>engineering@finbourne.com</Authors>
     <Company>FINBOURNE Technology Limited</Company>
-	<Product>LUSID</Product>
-	<Description>FINBOURNE Access service SDK Extensions - Test project</Description>
-	<RepositoryUrl>https://github.com/finbourne/access-sdk-extensions-csharp</RepositoryUrl>
+	  <Product>LUSID</Product>
+	  <Description>FINBOURNE Access service SDK Extensions - Test project</Description>
+	  <RepositoryUrl>https://github.com/finbourne/access-sdk-extensions-csharp</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
   <ItemGroup>
