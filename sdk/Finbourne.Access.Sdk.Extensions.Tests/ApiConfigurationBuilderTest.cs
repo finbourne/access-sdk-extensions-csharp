@@ -84,7 +84,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             Assert.That(apiConfiguration.Password, Is.EqualTo("<password>"));
             Assert.That(apiConfiguration.ClientId, Is.EqualTo("<clientId>"));
             Assert.That(apiConfiguration.ClientSecret, Is.EqualTo("<clientSecret>"));
-            Assert.That(apiConfiguration.ApiUrl, Is.EqualTo("<apiUrl>"));            
+            Assert.That(apiConfiguration.AccessUrl, Is.EqualTo("<apiUrl>"));            
         }
         [Test]
         public void Throw_Exception_If_Secrets_File_Incomplete()
@@ -119,7 +119,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             Assert.That(apiConfiguration.Password, Is.EqualTo("<env.password>"));
             Assert.That(apiConfiguration.ClientId, Is.EqualTo("<env.clientId>"));
             Assert.That(apiConfiguration.ClientSecret, Is.EqualTo("<env.clientSecret>"));
-            Assert.That(apiConfiguration.ApiUrl, Is.EqualTo("<env.apiUrl>"));            
+            Assert.That(apiConfiguration.AccessUrl, Is.EqualTo("<env.apiUrl>"));            
         }
         [Test]
         public void Throw_Exception_If_Environment_Variables_Incomplete()
@@ -159,7 +159,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             Assert.That(apiConfiguration.Password, Is.EqualTo("<password>"));
             Assert.That(apiConfiguration.ClientId, Is.EqualTo("<clientId>"));
             Assert.That(apiConfiguration.ClientSecret, Is.EqualTo("<clientSecret>"));
-            Assert.That(apiConfiguration.ApiUrl, Is.EqualTo("<apiUrl>"));            
+            Assert.That(apiConfiguration.AccessUrl, Is.EqualTo("<apiUrl>"));            
         }
         [Test]
         public void Throw_Exception_If_Configuration_Section_Is_Null()

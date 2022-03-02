@@ -73,7 +73,7 @@ namespace Finbourne.Access.Sdk.Extensions
             var apiConfig = new ApiConfiguration
             {
                 TokenUrl = Environment.GetEnvironmentVariable("FBN_TOKEN_URL") ?? Environment.GetEnvironmentVariable("fbn_token_url"),
-                ApiUrl = Environment.GetEnvironmentVariable("FBN_ACCESS_API_URL") ?? Environment.GetEnvironmentVariable("fbn_access_api_url"),
+                AccessUrl = Environment.GetEnvironmentVariable("FBN_ACCESS_API_URL") ?? Environment.GetEnvironmentVariable("fbn_access_api_url"),
                 ClientId = Environment.GetEnvironmentVariable("FBN_CLIENT_ID") ?? Environment.GetEnvironmentVariable("fbn_client_id"),
                 ClientSecret = Environment.GetEnvironmentVariable("FBN_CLIENT_SECRET") ?? Environment.GetEnvironmentVariable("fbn_client_secret"),
                 Username = Environment.GetEnvironmentVariable("FBN_USERNAME") ?? Environment.GetEnvironmentVariable("fbn_username"),

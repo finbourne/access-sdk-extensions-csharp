@@ -57,7 +57,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
         {
             var apiConfig = ApiConfigurationBuilder.Build("secrets.json");
             // nothing should be listening on this, so we should get a "No connection could be made" error...
-            apiConfig.ApiUrl = "https://localhost:56789/insights"; 
+            apiConfig.AccessUrl = "https://localhost:56789/insights"; 
 
             var factory = new ApiFactory(apiConfig);
             var api = factory.Api<RolesApi>();
