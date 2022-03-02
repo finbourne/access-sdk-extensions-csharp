@@ -318,7 +318,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             RetryConfiguration.RetryPolicy = PollyApiRetryHandler.DefaultRetryPolicyWithRateLimit;
             
             // Calling the API triggers the flow that triggers polly
-            var sdkResponse = _apiFactory.Api<IRolesApi>().GetxxxApiMethodxxx("code", scope: "scope");
+            var sdkResponse = _apiFactory.Api<IRolesApi>().GetRole("code", scope: "scope");
             
             Assert.That(sdkResponse, Is.EqualTo(_mockResponse));
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
@@ -345,7 +345,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             RetryConfiguration.RetryPolicy = PollyApiRetryHandler.RateLimitRetryPolicy;
             var sw = Stopwatch.StartNew();
             // Calling the API triggers the flow that triggers polly
-            var sdkResponse = _apiFactory.Api<IRolesApi>().GetxxxApiMethodxxx("code", scope: "scope");
+            var sdkResponse = _apiFactory.Api<IRolesApi>().GetRole("code", scope: "scope");
             sw.Stop();
             Assert.That(sw.ElapsedMilliseconds, Is.GreaterThanOrEqualTo(1000*9)); // retry after was respected
             Assert.That(sdkResponse, Is.EqualTo(_mockResponse));
@@ -371,7 +371,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             RetryConfiguration.RetryPolicy = PollyApiRetryHandler.RateLimitRetryPolicy;
             var sw = Stopwatch.StartNew();
             // Calling the API triggers the flow that triggers polly
-            var sdkResponse = _apiFactory.Api<IRolesApi>().GetxxxApiMethodxxx("code", scope: "scope");
+            var sdkResponse = _apiFactory.Api<IRolesApi>().GetRole("code", scope: "scope");
             sw.Stop();
             Assert.That(sw.ElapsedMilliseconds, Is.GreaterThanOrEqualTo(1000*(2+4+8))); // exponential backoff
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
@@ -623,18 +623,6 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             _apiCallCount = 0;
         }
 
-        private void AddMockHttpResponseToQueue(HttpListener httpListener, int statusCode,
-            string responseContent, int timeToRespondMillis = 0)
-        {
-            httpListener.BeginGetContext(
-                result =>
-                {
-                    _apiCallCount++;
-                    GetHttpResponseHandler(result, statusCode, responseContent, timeToRespondMillis);
-                },
-                httpListener);
-        }
-
         private static void GetHttpResponseHandler(IAsyncResult result, int statusCode, string responseContent,
             int timeToRespond = 0)
         {
@@ -663,5 +651,54 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             // You must close the output stream.
             output.Close();
         }
+        
+        private void AddMockHttpResponseToQueue(HttpListener httpListener, int statusCode,
+            string responseContent, int timeToRespondMillis = 0,  Dictionary<HttpResponseHeader, string> headerValues = null)
+        {
+            httpListener.BeginGetContext(
+                result =>
+                {
+                    _apiCallCount++;
+                    GetHttpResponseHandler(result, statusCode, responseContent, timeToRespondMillis, headerValues);
+                },
+                httpListener);
+        }
+        
+        private static void GetHttpResponseHandler(IAsyncResult result, int statusCode, string responseContent,
+            int timeToRespond = 0, Dictionary<HttpResponseHeader, string> headerValues = null)
+        {
+            var listener = (HttpListener)result.AsyncState;
+            // Call EndGetContext to complete the asynchronous operation.
+            var context = listener.EndGetContext(result);
+
+            // Obtain a response object.
+            var response = context.Response;
+
+            // Construct a response.
+            var buffer = System.Text.Encoding.UTF8.GetBytes(responseContent);
+
+            // Get a response stream and write the response to it.
+            response.ContentLength64 = buffer.Length;
+            response.StatusCode = statusCode;
+            // We're assuming all responses are JSONS, no XMLs
+            response.ContentType = "application/json; charset=utf-8";
+            if (headerValues != null)
+            {
+                foreach (var keyValuePair in headerValues)
+                {
+                    response.Headers.Add(keyValuePair.Key, keyValuePair.Value);        
+                }
+            }
+
+            var output = response.OutputStream;
+
+            // Simulate time taken for the response. Potentially simulate a timeout.
+            Thread.Sleep(timeToRespond);
+
+            output.Write(buffer, 0, buffer.Length);
+            // You must close the output stream.
+            output.Close();
+        }
+
     }
 }
