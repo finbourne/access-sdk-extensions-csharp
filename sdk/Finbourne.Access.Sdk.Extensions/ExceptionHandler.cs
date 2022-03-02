@@ -26,7 +26,10 @@ namespace Finbourne.Access.Sdk.Extensions
             // Throw if ErrorText has been populated:
             //  - Internal SDK deserialization errors will result in ErrorText to be not null.
             //  - Network-level errors will also result in ErrorText being populated.
-            if (response.ErrorText != null)
+            //  - OpenAPI generator for Drive SDK attempts to use an XmlDeserializer as default
+            //    choice for content which fails generating ErrorText !=null so we also need to
+            //    check content type != application/octet-stream
+            if (response.ErrorText != null && !(response.Headers.ContainsKey(CONTENT_TYPE) && response.Headers[CONTENT_TYPE][0].Equals(OCTET_STREAM)))
             {
                 return new ApiException(
                     (int)response.StatusCode,
@@ -38,5 +41,8 @@ namespace Finbourne.Access.Sdk.Extensions
 
             return null;
         }
+
+        private const string CONTENT_TYPE = "Content-Type";
+        private const string OCTET_STREAM = "application/octet-stream";
     }
 }
