@@ -40,7 +40,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             _httpListener.Prefixes.Add(ListenerUriPrefix);
 
             var testApiConfig = IntegrationTestApiFactoryBuilder.CreateApiConfiguration("secrets.json");
-            testApiConfig.ApiUrl = ListenerUriPrefix;
+            testApiConfig.AccessUrl = ListenerUriPrefix;
 
             _apiFactory = new ApiFactory(testApiConfig);
 

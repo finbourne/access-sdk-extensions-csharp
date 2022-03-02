@@ -13,7 +13,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
         private const string APP = "ACCESS";
         private string _secretsFile;
         private string _cachedTokenUrl;
-        private string _cachedApiUrl;
+        private string _cachedAccessUrl;
         private string _cachedClientId;
         private string _cachedClientSecret;
         private string _cachedUsername;
@@ -25,7 +25,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             _secretsFile = Path.GetTempFileName();
             _cachedTokenUrl = Environment.GetEnvironmentVariable("FBN_TOKEN_URL") ??
                               Environment.GetEnvironmentVariable("fbn_token_url");
-            _cachedApiUrl = Environment.GetEnvironmentVariable($"FBN_{APP}_API_URL") ??
+            _cachedAccessUrl = Environment.GetEnvironmentVariable($"FBN_{APP}_API_URL") ??
                             Environment.GetEnvironmentVariable($"fbn_{APP.ToLower()}_api_url");
             _cachedClientId = Environment.GetEnvironmentVariable("FBN_CLIENT_ID") ??
                               Environment.GetEnvironmentVariable("fbn_client_id");
@@ -42,7 +42,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
         public void TearDown()
         {
             Environment.SetEnvironmentVariable("FBN_TOKEN_URL", _cachedTokenUrl);
-            Environment.SetEnvironmentVariable($"FBN_{APP}_API_URL", _cachedApiUrl);
+            Environment.SetEnvironmentVariable($"FBN_{APP}_API_URL", _cachedAccessUrl);
             Environment.SetEnvironmentVariable("FBN_CLIENT_ID", _cachedClientId);
             Environment.SetEnvironmentVariable("FBN_CLIENT_SECRET", _cachedClientSecret);
             Environment.SetEnvironmentVariable("FBN_USERNAME", _cachedUsername);
@@ -76,7 +76,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
                 {"password", "<password>"},
                 {"clientId", "<clientId>"},
                 {"clientSecret", "<clientSecret>"},
-                {"apiUrl", "<apiUrl>"},
+                {"accessUrl", string.Format("<{0}Url>", "access")},
             });            
             var apiConfiguration = ApiConfigurationBuilder.Build(_secretsFile);
             Assert.That(apiConfiguration.TokenUrl, Is.EqualTo("<tokenUrl>"));
@@ -84,7 +84,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             Assert.That(apiConfiguration.Password, Is.EqualTo("<password>"));
             Assert.That(apiConfiguration.ClientId, Is.EqualTo("<clientId>"));
             Assert.That(apiConfiguration.ClientSecret, Is.EqualTo("<clientSecret>"));
-            Assert.That(apiConfiguration.ApiUrl, Is.EqualTo("<apiUrl>"));            
+            Assert.That(apiConfiguration.AccessUrl, Is.EqualTo(string.Format("<{0}Url>", "access")));            
         }
         [Test]
         public void Throw_Exception_If_Secrets_File_Incomplete()
@@ -96,7 +96,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
                 {"password", "<password>"},
                 // {"clientId", "<clientId>"},
                 {"clientSecret", "<clientSecret>"},
-                {"apiUrl", "<apiUrl>"},
+                {"accessUrl", string.Format("<{0}Url>", "access")},
             });
             var exception = Assert.Throws<MissingConfigException>(() => ApiConfigurationBuilder.Build(_secretsFile));
             Assert.That(exception.Message,
@@ -107,7 +107,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
         public void Use_Environment_Variables_If_No_Secrets_File_Provided()
         {
             Environment.SetEnvironmentVariable("FBN_TOKEN_URL", "<env.tokenUrl>");
-            Environment.SetEnvironmentVariable($"FBN_{APP}_API_URL", "<env.apiUrl>");
+            Environment.SetEnvironmentVariable($"FBN_{APP}_API_URL", string.Format("<env.{0}Url>", "access"));
             Environment.SetEnvironmentVariable("FBN_CLIENT_ID", "<env.clientId>");
             Environment.SetEnvironmentVariable("FBN_CLIENT_SECRET", "<env.clientSecret>");
             Environment.SetEnvironmentVariable("FBN_USERNAME", "<env.username>");
@@ -119,13 +119,13 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             Assert.That(apiConfiguration.Password, Is.EqualTo("<env.password>"));
             Assert.That(apiConfiguration.ClientId, Is.EqualTo("<env.clientId>"));
             Assert.That(apiConfiguration.ClientSecret, Is.EqualTo("<env.clientSecret>"));
-            Assert.That(apiConfiguration.ApiUrl, Is.EqualTo("<env.apiUrl>"));            
+            Assert.That(apiConfiguration.AccessUrl, Is.EqualTo(string.Format("<env.{0}Url>", "access")));            
         }
         [Test]
         public void Throw_Exception_If_Environment_Variables_Incomplete()
         {
             Environment.SetEnvironmentVariable("FBN_TOKEN_URL", "<env.tokenUrl>");
-            Environment.SetEnvironmentVariable($"FBN_{APP}_API_URL", "<env.apiUrl>");
+            Environment.SetEnvironmentVariable($"FBN_{APP}_API_URL", string.Format("<env.{0}Url>", "access"));
             Environment.SetEnvironmentVariable("FBN_CLIENT_ID", "<env.clientId>");
             Environment.SetEnvironmentVariable("FBN_CLIENT_SECRET", "");
             Environment.SetEnvironmentVariable("FBN_USERNAME", "<env.username>");
@@ -142,7 +142,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             var settings = new Dictionary<string, string>
             {
                 { "api:TokenUrl", "<tokenUrl>" },
-                { "api:ApiUrl", "<apiUrl>" },
+                { "api:AccessUrl", string.Format("<env.{0}Url>", "access") },
                 { "api:ClientId", "<clientId>" },
                 { "api:ClientSecret", "<clientSecret>" },
                 { "api:Username", "<username>" },
@@ -159,7 +159,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             Assert.That(apiConfiguration.Password, Is.EqualTo("<password>"));
             Assert.That(apiConfiguration.ClientId, Is.EqualTo("<clientId>"));
             Assert.That(apiConfiguration.ClientSecret, Is.EqualTo("<clientSecret>"));
-            Assert.That(apiConfiguration.ApiUrl, Is.EqualTo("<apiUrl>"));            
+            Assert.That(apiConfiguration.AccessUrl, Is.EqualTo(string.Format("<env.{0}Url>", "access")));
         }
         [Test]
         public void Throw_Exception_If_Configuration_Section_Is_Null()
@@ -173,7 +173,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             var settings = new Dictionary<string, string>
             {
                 { "api:TokenUrl", "<tokenUrl>" },
-                { "api:ApiUrl", "<apiUrl>" },
+                { "api:AccessUrl", string.Format("<{0}Url>", "access") },
                 { "api:ClientId", "<clientId>" },
                 { "api:ClientSecret", "" },
                 { "api:Username", "<username>" },

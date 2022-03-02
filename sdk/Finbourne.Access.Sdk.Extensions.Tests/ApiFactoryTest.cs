@@ -20,12 +20,12 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
         }
 
         [Test]
-        public void InvalidApiUrl_ThrowsException()
+        public void InvalidAccessUrl_ThrowsException()
         {
             ApiConfiguration apiConfig = new ApiConfiguration
             {
                 TokenUrl = "http://finbourne.com",
-                ApiUrl = "xyz"
+                AccessUrl = "xyz"
             };
 
             Assert.That(
