@@ -207,14 +207,17 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
                     _apiCallCount++;
                     var listener = (HttpListener)result.AsyncState;
                     // Call EndGetContext to complete the asynchronous operation.
-                    var context = listener.EndGetContext(result);
+                    if (listener != null)
+                    {
+                        var context = listener.EndGetContext(result);
 
-                    // Obtain a response object.
-                    var response = context.Response;
+                        // Obtain a response object.
+                        var response = context.Response;
 
-                    // Abort the response. This returns 0 status code when running on windows.
-                    // Dotnet does not allow specifying a return status code 0, so this is a workaround on windows.
-                    response.Abort();
+                        // Abort the response. This returns 0 status code when running on windows.
+                        // Dotnet does not allow specifying a return status code 0, so this is a workaround on windows.
+                        response.Abort();
+                    }
                 }, _httpListener);
             }
 
@@ -292,6 +295,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
 
        }
         
+        
         [Test]
         public void UsePolicyWrap_WhenCallingApiMethodHitsRateLimit_BothDefaultAndRateLimitPoliciesAreUsed()
         {
@@ -301,17 +305,17 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             
             // First Response
             AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 
-                0, new Dictionary<HttpResponseHeader, string>() );
+                0, new Dictionary<HttpResponseHeader, string>() {[HttpResponseHeader.RetryAfter] = "1"});
             // Second Response - same, triggers another retry
             AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 
-                0, new Dictionary<HttpResponseHeader, string>() );
+                0, new Dictionary<HttpResponseHeader, string>() {[HttpResponseHeader.RetryAfter] = "1"});
             
             AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 
-                0, new Dictionary<HttpResponseHeader, string>() );
+                0, new Dictionary<HttpResponseHeader, string>() {[HttpResponseHeader.RetryAfter] = "1"});
 
-            AddMockHttpResponseToQueue(_httpListener, statusCode: statusCodeResponseDefaultRetry, responseContent: "", 0);
+            AddMockHttpResponseToQueue(_httpListener, statusCode: statusCodeResponseDefaultRetry, responseContent: "");
             
-            AddMockHttpResponseToQueue(_httpListener, statusCode: statusCodeResponseDefaultRetry, responseContent: "", 0);
+            AddMockHttpResponseToQueue(_httpListener, statusCode: statusCodeResponseDefaultRetry, responseContent: "");
 
             AddMockHttpResponseToQueue(_httpListener, statusCode: 200, responseContent: _mockResponse.ToJson());
           
@@ -332,13 +336,13 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             
             // First Response
             AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 
-                0, new Dictionary<HttpResponseHeader, string>() );
+                0, new Dictionary<HttpResponseHeader, string>() { [HttpResponseHeader.RetryAfter] = "5" });
             // Second Response - same, triggers another retry
             AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 
-                0, new Dictionary<HttpResponseHeader, string>() );
+                0, new Dictionary<HttpResponseHeader, string>() { [HttpResponseHeader.RetryAfter] = "7" });
             
             AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 
-                0, new Dictionary<HttpResponseHeader, string>() );
+                0, new Dictionary<HttpResponseHeader, string>() { [HttpResponseHeader.RetryAfter] = "9" });
             // 4 time lucky:
             AddMockHttpResponseToQueue(_httpListener, statusCode: 200, responseContent: _mockResponse.ToJson());
 
@@ -359,19 +363,19 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             const int expectedNumberOfApiCalls = 4; // 1 initial call + 3 retries 
             
             // First Response
-            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 0);
+            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, "");
             // Second Response - same, triggers another retry
-            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 0);
+            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "");
             // Third Response - same, triggers another retry
-            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 0);
+            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "");
 
-            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 0);
+            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "");
 
             
             RetryConfiguration.RetryPolicy = PollyApiRetryHandler.RateLimitRetryPolicy;
             var sw = Stopwatch.StartNew();
             // Calling the API triggers the flow that triggers polly
-            var sdkResponse = _apiFactory.Api<IRolesApi>().GetRole("code", scope: "scope");
+            _apiFactory.Api<IRolesApi>().GetRole("code", scope: "scope");
             sw.Stop();
             Assert.That(sw.ElapsedMilliseconds, Is.GreaterThanOrEqualTo(1000*(2+4+8))); // exponential backoff
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
@@ -477,14 +481,17 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
                     _apiCallCount++;
                     var listener = (HttpListener)result.AsyncState;
                     // Call EndGetContext to complete the asynchronous operation.
-                    var context = listener.EndGetContext(result);
+                    if (listener != null)
+                    {
+                        var context = listener.EndGetContext(result);
 
-                    // Obtain a response object.
-                    var response = context.Response;
+                        // Obtain a response object.
+                        var response = context.Response;
 
-                    // Abort the response. This returns 0 status code when running on windows.
-                    // Dotnet does not allow specifying a return status code 0, so this is a workaround on windows.
-                    response.Abort();
+                        // Abort the response. This returns 0 status code when running on windows.
+                        // Dotnet does not allow specifying a return status code 0, so this is a workaround on windows.
+                        response.Abort();
+                    }
                 }, _httpListener);
             }
 
@@ -527,7 +534,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             Assert.That(exception.ErrorCode, Is.EqualTo(0));
         }
         
-        [Test]
+           [Test]
         public async Task UsePolicyWrapAsync_WhenCallingApiMethodHitsRateLimit_BothDefaultAndRateLimitPoliciesAreUsed()
         {
             const int retryAfterResponseCode = 429;
@@ -536,17 +543,17 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             
             // First Response
             AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 
-                0, new Dictionary<HttpResponseHeader, string>() );
+                0, new Dictionary<HttpResponseHeader, string>() { [HttpResponseHeader.RetryAfter] = "1" });
             // Second Response - same, triggers another retry
             AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 
-                0, new Dictionary<HttpResponseHeader, string>() );
+                0, new Dictionary<HttpResponseHeader, string>() { [HttpResponseHeader.RetryAfter] = "1" });
             
             AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 
-                0, new Dictionary<HttpResponseHeader, string>() );
+                0, new Dictionary<HttpResponseHeader, string>() { [HttpResponseHeader.RetryAfter] = "1" });
 
-            AddMockHttpResponseToQueue(_httpListener, statusCode: statusCodeResponseDefaultRetry, responseContent: "", 0);
+            AddMockHttpResponseToQueue(_httpListener, statusCode: statusCodeResponseDefaultRetry, responseContent: "");
             
-            AddMockHttpResponseToQueue(_httpListener, statusCode: statusCodeResponseDefaultRetry, responseContent: "", 0);
+            AddMockHttpResponseToQueue(_httpListener, statusCodeResponseDefaultRetry, responseContent: "");
 
             AddMockHttpResponseToQueue(_httpListener, statusCode: 200, responseContent: _mockResponse.ToJson());
           
@@ -567,13 +574,13 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             
             // First Response
             AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 
-                0, new Dictionary<HttpResponseHeader, string>() );
+                0, new Dictionary<HttpResponseHeader, string>() { [HttpResponseHeader.RetryAfter] = "5" });
             // Second Response - same, triggers another retry
             AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 
-                0, new Dictionary<HttpResponseHeader, string>() );
+                0, new Dictionary<HttpResponseHeader, string>() { [HttpResponseHeader.RetryAfter] = "7" });
             
             AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 
-                0, new Dictionary<HttpResponseHeader, string>() );
+                0, new Dictionary<HttpResponseHeader, string>() { [HttpResponseHeader.RetryAfter] = "9" });
             // 4 time lucky:
             AddMockHttpResponseToQueue(_httpListener, statusCode: 200, responseContent: _mockResponse.ToJson());
 
@@ -582,7 +589,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             // Calling API triggers the flow that triggers polly
             var sdkResponse = await _apiFactory.Api<IRolesApi>().GetRoleAsync("code", scope: "scope");
             sw.Stop();
-            Assert.That(sw.ElapsedMilliseconds, Is.GreaterThanOrEqualTo(1000*9)); // retry after was respected
+            Assert.That(sw.ElapsedMilliseconds, Is.GreaterThanOrEqualTo(1000*21)); // retry after was respected
             Assert.That(sdkResponse, Is.EqualTo(_mockResponse));
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
         }
@@ -594,19 +601,19 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             const int expectedNumberOfApiCalls = 4; // 1 initial call + 3 retries 
             
             // First Response
-            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 0);
+            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "");
             // Second Response - same, triggers another retry
-            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 0);
+            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "");
             // Third Response - same, triggers another retry
-            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 0);
+            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "");
 
-            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "", 0);
+            AddMockHttpResponseToQueue(_httpListener, statusCode: retryAfterResponseCode, responseContent: "");
 
             
             RetryConfiguration.AsyncRetryPolicy = PollyApiRetryHandler.AsyncRateLimitRetryPolicy;
             var sw = Stopwatch.StartNew();
             // Calling API triggers the flow that triggers polly
-            var sdkResponse = await _apiFactory.Api<IRolesApi>().GetRoleAsync("code", scope: "scope");
+            await _apiFactory.Api<IRolesApi>().GetRoleAsync("code", scope: "scope");
             sw.Stop();
             Assert.That(sw.ElapsedMilliseconds, Is.GreaterThanOrEqualTo(1000*(2+4+8))); // exponential backoff
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
@@ -622,36 +629,45 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             _httpListener.Close();
             _apiCallCount = 0;
         }
-
-        private static void GetHttpResponseHandler(IAsyncResult result, int statusCode, string responseContent,
-            int timeToRespond = 0)
+        
+         private static void GetHttpResponseHandler(IAsyncResult result, int statusCode, string responseContent,
+            int timeToRespond = 0, Dictionary<HttpResponseHeader, string> headerValues = null)
         {
             var listener = (HttpListener)result.AsyncState;
             // Call EndGetContext to complete the asynchronous operation.
-            var context = listener.EndGetContext(result);
+            if (listener != null)
+            {
+                var context = listener.EndGetContext(result);
 
-            // Obtain a response object.
-            var response = context.Response;
+                // Obtain a response object.
+                var response = context.Response;
 
-            // Construct a response.
-            var buffer = System.Text.Encoding.UTF8.GetBytes(responseContent);
+                // Construct a response.
+                var buffer = System.Text.Encoding.UTF8.GetBytes(responseContent);
 
-            // Get a response stream and write the response to it.
-            response.ContentLength64 = buffer.Length;
-            response.StatusCode = statusCode;
-            // We're assuming all responses are JSONS, no XMLs
-            response.ContentType = "application/json; charset=utf-8";
+                // Get a response stream and write the response to it.
+                response.ContentLength64 = buffer.Length;
+                response.StatusCode = statusCode;
+                // We're assuming all responses are JSONS, no XMLs
+                response.ContentType = "application/json; charset=utf-8";
+                if (headerValues != null)
+                {
+                    foreach (var keyValuePair in headerValues)
+                    {
+                        response.Headers.Add(keyValuePair.Key, keyValuePair.Value);        
+                    }
+                }
 
-            var output = response.OutputStream;
+                var output = response.OutputStream;
 
-            // Simulate time taken for the response. Potentially simulate a timeout.
-            Thread.Sleep(timeToRespond);
+                // Simulate time taken for the response. Potentially simulate a timeout.
+                Thread.Sleep(timeToRespond);
 
-            output.Write(buffer, 0, buffer.Length);
-            // You must close the output stream.
-            output.Close();
+                output.Write(buffer, 0, buffer.Length);
+                // You must close the output stream.
+                output.Close();
+            }
         }
-        
         private void AddMockHttpResponseToQueue(HttpListener httpListener, int statusCode,
             string responseContent, int timeToRespondMillis = 0,  Dictionary<HttpResponseHeader, string> headerValues = null)
         {
@@ -662,42 +678,6 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
                     GetHttpResponseHandler(result, statusCode, responseContent, timeToRespondMillis, headerValues);
                 },
                 httpListener);
-        }
-        
-        private static void GetHttpResponseHandler(IAsyncResult result, int statusCode, string responseContent,
-            int timeToRespond = 0, Dictionary<HttpResponseHeader, string> headerValues = null)
-        {
-            var listener = (HttpListener)result.AsyncState;
-            // Call EndGetContext to complete the asynchronous operation.
-            var context = listener.EndGetContext(result);
-
-            // Obtain a response object.
-            var response = context.Response;
-
-            // Construct a response.
-            var buffer = System.Text.Encoding.UTF8.GetBytes(responseContent);
-
-            // Get a response stream and write the response to it.
-            response.ContentLength64 = buffer.Length;
-            response.StatusCode = statusCode;
-            // We're assuming all responses are JSONS, no XMLs
-            response.ContentType = "application/json; charset=utf-8";
-            if (headerValues != null)
-            {
-                foreach (var keyValuePair in headerValues)
-                {
-                    response.Headers.Add(keyValuePair.Key, keyValuePair.Value);        
-                }
-            }
-
-            var output = response.OutputStream;
-
-            // Simulate time taken for the response. Potentially simulate a timeout.
-            Thread.Sleep(timeToRespond);
-
-            output.Write(buffer, 0, buffer.Length);
-            // You must close the output stream.
-            output.Close();
         }
 
     }
