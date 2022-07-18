@@ -62,7 +62,7 @@ jobs:
           FBN_PASSWORD: ${{ secrets.MASTER_FBN_PASSWORD }}
           FBN_CLIENT_ID: ${{ secrets.MASTER_FBN_CLIENT_ID }}
           FBN_CLIENT_SECRET: ${{ secrets.MASTER_FBN_CLIENT_SECRET }}
-          FBN_ACCESS_API_URL: ${{ secrets.MASTER_FBN_ACCESS_API_URL }}
+          FBN_ACCESS_API_URL: ${{ secrets.MASTER_FBN_ACCESS_URL }}
           FBN_APP_NAME: ${{ secrets.MASTER_FBN_CLIENT_ID }}
           FBN_ACCESS_ACCESS_TOKEN: ${{ secrets.MASTER_FBN_ACCESS_TOKEN }}
         run: dotnet test --configuration Release --verbosity normal sdk/Finbourne.Access.Sdk.Extensions.sln
