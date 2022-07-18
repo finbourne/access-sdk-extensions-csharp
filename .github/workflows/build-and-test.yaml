@@ -65,7 +65,7 @@ jobs:
           FBN_ACCESS_API_URL: ${{ secrets.MASTER_FBN_ACCESS_API_URL }}
           FBN_APP_NAME: ${{ secrets.MASTER_FBN_CLIENT_ID }}
           FBN_ACCESS_ACCESS_TOKEN: ${{ secrets.MASTER_FBN_ACCESS_TOKEN }}
-        run: dotnet test --configuration Release --verbosity normal sdk/Finbourne.Configuration.Sdk.Extensions.sln
+        run: dotnet test --configuration Release --verbosity normal sdk/Finbourne.Access.Sdk.Extensions.sln
 
       - name: Slack notification
         uses: 8398a7/action-slack@v3
