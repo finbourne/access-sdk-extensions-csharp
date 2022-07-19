@@ -516,6 +516,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
 
         // Default timeout config is 100000 seconds (1min40s)
         [Test]
+        [Explicit("Only run this locally. Given the timeout and the retries running this in the pipeline across all SDKs takes too long")]
         public void CallApiMethodAsync_WhenRequestTimeExceedsTimeoutConfigured_NoRetryIsTriggeredOnClientTimeout_Throws()
         {
             var timeoutAfterMillis = GlobalConfiguration.Instance.Timeout;

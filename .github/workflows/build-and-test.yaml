@@ -31,25 +31,40 @@ jobs:
           else
             exit 1
           fi
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+
+      - name: Restore dependencies
+        run: |          
+          retries=14
+          found=0
+          while [[ $retries -ge 0 && $found == 0 ]]; do
+              if ! dotnet restore sdk/Finbourne.Access.Sdk.Extensions.sln ; then
+                  echo "[ERROR] unable to restore dependencies, attempts remaining: $retries"
+                  sleep 60
+                  ((retries--))
+              else
+                  echo "[INFO] successfully installed dependencies"
+                  found=1
+              fi
+          done
+          if [ $found == 0 ] ; then
+            echo "[ERROR] unable to restore dependencies"
+            exit 1
+          fi
       
-      - name: Run tests on MASTER branch
-        if: ${{ github.base_ref == 'master' || github.ref == 'refs/heads/master' }}
+      - name: Run tests
         env: 
-          FBN_TOKEN_URL: ${{ secrets.MASTER_FBN_TOKEN_URL }}
-          FBN_USERNAME: ${{ secrets.MASTER_FBN_USERNAME }}
-          FBN_PASSWORD: ${{ secrets.MASTER_FBN_PASSWORD }}
-          FBN_CLIENT_ID: ${{ secrets.MASTER_FBN_CLIENT_ID }}
-          FBN_CLIENT_SECRET: ${{ secrets.MASTER_FBN_CLIENT_SECRET }}
-          FBN_ACCESS_API_URL: ${{ secrets.MASTER_FBN_ACCESS_API_URL }}
-          FBN_APP_NAME: ${{ secrets.MASTER_FBN_CLIENT_ID }}
-          FBN_ACCESS_ACCESS_TOKEN: ${{ secrets.MASTER_FBN_ACCESS_TOKEN }}
-        run: | 
-          echo "env variables for MASTER have been set"
-          echo "Changing directory into sdk directory"
-          cd sdk          
-          echo "Running the tests..."
-          docker-compose up --abort-on-container-exit
-          echo "Tests COMPLETED"
+          FBN_TOKEN_URL: ${{ secrets.FBN_TOKEN_URL }}
+          FBN_USERNAME: ${{ secrets.FBN_USERNAME }}
+          FBN_PASSWORD: ${{ secrets.FBN_PASSWORD }}
+          FBN_CLIENT_ID: ${{ secrets.FBN_CLIENT_ID }}
+          FBN_CLIENT_SECRET: ${{ secrets.FBN_CLIENT_SECRET }}
+          FBN_ACCESS_API_URL: ${{ secrets.FBN_ACCESS_API_URL }}
+          FBN_APP_NAME: ${{ secrets.FBN_APP_NAME }}
+          FBN_ACCESS_TOKEN: ${{ secrets.FBN_ACCESS_TOKEN }}
+        run: dotnet test --configuration Release --verbosity normal sdk/Finbourne.Access.Sdk.Extensions.sln
 
       - name: Slack notification
         uses: 8398a7/action-slack@v3
