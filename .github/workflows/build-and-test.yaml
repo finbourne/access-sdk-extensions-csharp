@@ -37,12 +37,12 @@ jobs:
 
       - name: Restore dependencies
         run: |          
-          retries=2
+          retries=14
           found=0
           while [[ $retries -ge 0 && $found == 0 ]]; do
               if ! dotnet restore sdk/Finbourne.Access.Sdk.Extensions.sln ; then
                   echo "[ERROR] unable to restore dependencies, attempts remaining: $retries"
-                  sleep 30
+                  sleep 60
                   ((retries--))
               else
                   echo "[INFO] successfully installed dependencies"
