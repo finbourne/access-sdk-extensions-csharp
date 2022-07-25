@@ -27,5 +27,5 @@ jobs:
           }]
           }
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_FOR_GITHUB_ACTIVITY_CHANNEL }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
       if: always()
