@@ -9,7 +9,4 @@ COPY Finbourne.Access.Sdk.Extensions.Tests/Finbourne.Access.Sdk.Extensions.Tests
 COPY Finbourne.Access.Sdk.Extensions.IntegrationTests/Finbourne.Access.Sdk.Extensions.IntegrationTests.csproj /usr/src/Finbourne.Access.Sdk.Extensions.IntegrationTests/
 RUN dotnet restore Finbourne.Access.Sdk.Extensions
 
-ENV FBN_ACCESS_API_URL ${FBN_ACCESS_API_URL}
-
-# ENTRYPOINT [ "/bin/bash" ]
-ENTRYPOINT dotnet test --configuration Release --verbosity normal Finbourne.Access.Sdk.Extensions
+ENTRYPOINT dotnet test --configuration Release --verbosity normal
