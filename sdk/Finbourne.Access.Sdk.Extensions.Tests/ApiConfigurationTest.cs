@@ -19,9 +19,9 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
         {
             ApiConfiguration config = GetApiConfiguration();
             config.TokenUrl = String.Empty;
-            List<string> missingList = config.MissingConfig();
-            Assert.That(missingList.Count, Is.EqualTo(1), "MissingConfig list contains one item");
-            Assert.That(missingList[0], Is.EqualTo(nameof(config.TokenUrl)), "MissingConfig list string correct");
+            List<string> missingList = config.GetMissingConfig();
+            Assert.That(missingList.Count, Is.EqualTo(1), "GetMissingConfig list contains one item");
+            Assert.That(missingList[0], Is.EqualTo(nameof(config.TokenUrl)), "GetMissingConfig list string correct");
         }
 
         [Test]
@@ -37,9 +37,9 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
         {
             ApiConfiguration config = GetApiConfiguration();
             config.Username = String.Empty;
-            List<string> missingList = config.MissingConfig();
-            Assert.That(missingList.Count, Is.EqualTo(1), "MissingConfig list contains one item");
-            Assert.That(missingList[0], Is.EqualTo(nameof(config.Username)), "MissingConfig list string correct");
+            List<string> missingList = config.GetMissingConfig();
+            Assert.That(missingList.Count, Is.EqualTo(1), "GetMissingConfig list contains one item");
+            Assert.That(missingList[0], Is.EqualTo(nameof(config.Username)), "GetMissingConfig list string correct");
         }
 
         [Test]
@@ -55,9 +55,9 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
         {
             ApiConfiguration config = GetApiConfiguration();
             config.Password = String.Empty;
-            List<string> missingList = config.MissingConfig();
-            Assert.That(missingList.Count, Is.EqualTo(1), "MissingConfig list contains one item");
-            Assert.That(missingList[0], Is.EqualTo(nameof(config.Password)), "MissingConfig list string correct");
+            List<string> missingList = config.GetMissingConfig();
+            Assert.That(missingList.Count, Is.EqualTo(1), "GetMissingConfig list contains one item");
+            Assert.That(missingList[0], Is.EqualTo(nameof(config.Password)), "GetMissingConfig list string correct");
         }
 
         [Test]
@@ -73,9 +73,9 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
         {
             ApiConfiguration config = GetApiConfiguration();
             config.ClientId = String.Empty;
-            List<string> missingList = config.MissingConfig();
-            Assert.That(missingList.Count, Is.EqualTo(1), "MissingConfig list contains one item");
-            Assert.That(missingList[0], Is.EqualTo(nameof(config.ClientId)), "MissingConfig list string correct");
+            List<string> missingList = config.GetMissingConfig();
+            Assert.That(missingList.Count, Is.EqualTo(1), "GetMissingConfig list contains one item");
+            Assert.That(missingList[0], Is.EqualTo(nameof(config.ClientId)), "GetMissingConfig list string correct");
         }
 
         [Test]
@@ -91,9 +91,9 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
         {
             ApiConfiguration config = GetApiConfiguration();
             config.ClientSecret = String.Empty;
-            List<string> missingList = config.MissingConfig();
-            Assert.That(missingList.Count, Is.EqualTo(1), "MissingConfig list contains one item");
-            Assert.That(missingList[0], Is.EqualTo(nameof(config.ClientSecret)), "MissingConfig list string correct");
+            List<string> missingList = config.GetMissingConfig();
+            Assert.That(missingList.Count, Is.EqualTo(1), "GetMissingConfig list contains one item");
+            Assert.That(missingList[0], Is.EqualTo(nameof(config.ClientSecret)), "GetMissingConfig list string correct");
         }
 
         [Test]
@@ -109,9 +109,9 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
         {
             ApiConfiguration config = GetApiConfiguration();
             config.AccessUrl = String.Empty;
-            List<string> missingList = config.MissingConfig();
-            Assert.That(missingList.Count, Is.EqualTo(1), "MissingConfig list contains one item");
-            Assert.That(missingList[0], Is.EqualTo(nameof(config.AccessUrl)), "MissingConfig list string correct");
+            List<string> missingList = config.GetMissingConfig();
+            Assert.That(missingList.Count, Is.EqualTo(1), "GetMissingConfig list contains one item");
+            Assert.That(missingList[0], Is.EqualTo(nameof(config.AccessUrl)), "GetMissingConfig list string correct");
         }
 
         [Test]
@@ -125,8 +125,8 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
         public void ApiConfiguration_MissingConfig_Missing_Multiple_Properties_Returns_Correct_Strings()
         {
             ApiConfiguration config = new ApiConfiguration();
-            List<string> missingList = config.MissingConfig();
-            Assert.That(missingList.Count, Is.EqualTo(6), "MissingConfig list contains six items");
+            List<string> missingList = config.GetMissingConfig();
+            Assert.That(missingList.Count, Is.EqualTo(6), "GetMissingConfig list contains six items");
         }
 
         [Test]
@@ -138,7 +138,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
         [Test]
         public void ApiConfiguration_MissingConfig_Valid_Config_Returns_Empty_List()
         {
-            List<string> missingList = GetApiConfiguration().MissingConfig();
+            List<string> missingList = GetApiConfiguration().GetMissingConfig();
             Assert.That(missingList.Count, Is.EqualTo(0), "MissingConfig list contains no items");
         }
 

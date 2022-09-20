@@ -19,6 +19,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
         private string _cachedUsername;
         private string _cachedPassword;
         private string _cachedApplicationName;
+
         [OneTimeSetUp]
         public void Setup()
         {
@@ -38,6 +39,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             _cachedApplicationName = Environment.GetEnvironmentVariable("FBN_APP_NAME") ??
                                      Environment.GetEnvironmentVariable("fbn_app_name");
         }
+
         [OneTimeTearDown]
         public void TearDown()
         {
@@ -50,6 +52,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             Environment.SetEnvironmentVariable("FBN_APP_NAME", _cachedApplicationName);
             File.Delete(_secretsFile);
         }
+
         [TestCase(null)]
         [TestCase("invalidFileName.json")]
         public void Fallback_To_Env_Variables_When_Missing_Secrets_File(string fileName)
@@ -57,6 +60,10 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             try
             {
                 var result = ApiConfigurationBuilder.Build(fileName);
+                if (result.MissingPersonalAccessTokenVariables)
+                {
+                    Assert.Inconclusive();
+                }
                 // assuming env variables are set:
                 Assert.IsFalse(result.HasMissingConfig());
             }
@@ -66,6 +73,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
                 Assert.AreEqual(e.Message, $"The following required environment variables are not set: ['FBN_TOKEN_URL', 'FBN_USERNAME', 'FBN_PASSWORD', 'FBN_CLIENT_ID', 'FBN_CLIENT_SECRET', 'FBN_{APP}_API_URL']");
             }
         }
+
         [Test]
         public void Use_Secrets_File_If_It_Exists()
         {
@@ -86,6 +94,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             Assert.That(apiConfiguration.ClientSecret, Is.EqualTo("<clientSecret>"));
             Assert.That(apiConfiguration.AccessUrl, Is.EqualTo(string.Format("<{0}Url>", "access")));            
         }
+
         [Test]
         public void Throw_Exception_If_Secrets_File_Incomplete()
         {
@@ -103,6 +112,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
                 Is.EqualTo(
                     "The provided secrets file is missing the following required values: ['username', 'clientId']"));
         }
+
         [Test]
         public void Use_Environment_Variables_If_No_Secrets_File_Provided()
         {
@@ -121,9 +131,14 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             Assert.That(apiConfiguration.ClientSecret, Is.EqualTo("<env.clientSecret>"));
             Assert.That(apiConfiguration.AccessUrl, Is.EqualTo(string.Format("<env.{0}Url>", "access")));            
         }
+
         [Test]
         public void Throw_Exception_If_Environment_Variables_Incomplete()
         {
+            if (Environment.GetEnvironmentVariable("FBN_ACCESS_TOKEN") != null)
+            {
+                Assert.Inconclusive();
+            }
             Environment.SetEnvironmentVariable("FBN_TOKEN_URL", "<env.tokenUrl>");
             Environment.SetEnvironmentVariable($"FBN_{APP}_API_URL", string.Format("<env.{0}Url>", "access"));
             Environment.SetEnvironmentVariable("FBN_CLIENT_ID", "<env.clientId>");
@@ -136,6 +151,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
                 Is.EqualTo(
                     "The following required environment variables are not set: ['FBN_PASSWORD', 'FBN_CLIENT_SECRET']"));
         }
+
         [Test]
         public void Use_Configuration_Section_If_Supplied()
         {
@@ -161,12 +177,14 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             Assert.That(apiConfiguration.ClientSecret, Is.EqualTo("<clientSecret>"));
             Assert.That(apiConfiguration.AccessUrl, Is.EqualTo(string.Format("<env.{0}Url>", "access")));
         }
+
         [Test]
         public void Throw_Exception_If_Configuration_Section_Is_Null()
         {
             var exception = Assert.Throws<ArgumentNullException>(() => ApiConfigurationBuilder.BuildFromConfiguration(null));
             Assert.That(exception.Message, Is.EqualTo("Value cannot be null. (Parameter 'config')"));
         }
+
         [Test]
         public void Throw_Exception_If_Configuration_Section_Incomplete()
         {
@@ -189,6 +207,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
                 Is.EqualTo(
                     "The provided configuration section is missing the following required values: ['Password', 'ClientSecret']"));
         }
+
         private void PopulateDummySecretsFile(Dictionary<string, string> config)
         {
             var secrets = new Dictionary<string, object>
@@ -198,6 +217,7 @@ namespace Finbourne.Access.Sdk.Extensions.Tests
             var json = JsonSerializer.Serialize(secrets);
             File.WriteAllText(_secretsFile, json);
         }
+
         class InMemoryConsole : IDisposable
         {
             private readonly StringWriter _stringWriter;

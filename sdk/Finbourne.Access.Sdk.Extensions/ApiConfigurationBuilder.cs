@@ -19,6 +19,7 @@ namespace Finbourne.Access.Sdk.Extensions
                 { "ClientSecret", "FBN_CLIENT_SECRET" },
                 { "Username", "FBN_USERNAME" },
                 { "Password", "FBN_PASSWORD" },
+                { "PersonalAccessToken", "FBN_ACCESS_TOKEN" },
             };
 
         private static readonly Dictionary<string, string> ConfigNamesToSecrets = new Dictionary<string, string>()
@@ -34,9 +35,11 @@ namespace Finbourne.Access.Sdk.Extensions
         /// <summary>
         /// Builds an ApiConfiguration. using the supplied configuration file (if supplied)
         /// or environment variables.
+        ///
+        /// <seealso href="https://github.com/finbourne/lusid-sdk-csharp/wiki/API-credentials">For further details refer to wiki article.</seealso>
         /// </summary>
         /// <param name="apiSecretsFilename">filename of the secrets.json</param>
-        /// <returns>ApiConfiguration object<</returns>
+        /// <returns>ApiConfiguration object</returns>
         public static ApiConfiguration Build(string apiSecretsFilename)
         {
             var result = BuildFromSecretsFile(apiSecretsFilename);
@@ -46,6 +49,8 @@ namespace Finbourne.Access.Sdk.Extensions
 
         /// <summary>
         /// Builds an ApiConfiguration using the supplied configuration section.
+        ///
+        /// <seealso href="https://github.com/finbourne/lusid-sdk-csharp/wiki/API-credentials">For further details refer to wiki article.</seealso>
         /// </summary>
         /// <param name="config">section of ASP Core configuration with required fields</param>
         /// <returns>ApiConfiguration object</returns>
@@ -58,11 +63,11 @@ namespace Finbourne.Access.Sdk.Extensions
 
             if (apiConfig.HasMissingConfig())
             {
-                var missingValues = apiConfig.MissingConfig()
-                .Select(value => $"'{value}'");
+                var missingValues = apiConfig.GetMissingConfig()
+                    .Select(value => $"'{value}'");
                 var message = $"[{string.Join(", ", missingValues)}]";
                 throw new MissingConfigException(
-                $"The provided configuration section is missing the following required values: {message}");
+                    $"The provided configuration section is missing the following required values: {message}");
             }
 
             return apiConfig;
@@ -78,16 +83,17 @@ namespace Finbourne.Access.Sdk.Extensions
                 ClientSecret = Environment.GetEnvironmentVariable("FBN_CLIENT_SECRET") ?? Environment.GetEnvironmentVariable("fbn_client_secret"),
                 Username = Environment.GetEnvironmentVariable("FBN_USERNAME") ?? Environment.GetEnvironmentVariable("fbn_username"),
                 Password = Environment.GetEnvironmentVariable("FBN_PASSWORD") ?? Environment.GetEnvironmentVariable("fbn_password"),
-                ApplicationName = Environment.GetEnvironmentVariable("FBN_APP_NAME") ?? Environment.GetEnvironmentVariable("fbn_app_name")
+                ApplicationName = Environment.GetEnvironmentVariable("FBN_APP_NAME") ?? Environment.GetEnvironmentVariable("fbn_app_name"),
+                PersonalAccessToken = Environment.GetEnvironmentVariable("FBN_ACCESS_TOKEN") ?? Environment.GetEnvironmentVariable("fbn_access_token"),
             };
 
             if (apiConfig.HasMissingConfig())
             {
-                var missingValues = apiConfig.MissingConfig()
-                .Select(value => $"'{ConfigNamesToEnvVariables[value]}'");
+                var missingValues = apiConfig.GetMissingConfig()
+                    .Select(value => $"'{ConfigNamesToEnvVariables[value]}'");
                 var message = $"[{string.Join(", ", missingValues)}]";
                 throw new MissingConfigException(
-                $"The following required environment variables are not set: {message}");
+                    $"The following required environment variables are not set: {message}");
             }
 
             return apiConfig;
@@ -108,11 +114,11 @@ namespace Finbourne.Access.Sdk.Extensions
 
             if (apiConfig.HasMissingConfig())
             {
-                var missingValues = apiConfig.MissingConfig()
-                .Select(value => $"'{ConfigNamesToSecrets[value]}'");
+                var missingValues = apiConfig.GetMissingConfig()
+                    .Select(value => $"'{ConfigNamesToSecrets[value]}'");
                 var message = $"[{string.Join(", ", missingValues)}]";
                 throw new MissingConfigException(
-                $"The provided secrets file is missing the following required values: {message}");
+                    $"The provided secrets file is missing the following required values: {message}");
             }
 
             return apiConfig;

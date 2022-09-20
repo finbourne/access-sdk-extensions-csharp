@@ -43,51 +43,80 @@ namespace Finbourne.Access.Sdk.Extensions
         public string ApplicationName { get; set; }
         
         /// <summary>
+        /// Configurable via FBN_ACCESS_TOKEN env variable - get the value from LUSID web 'Your Profile'->'Personal access tokens'.
+        /// Takes precedence over other authentication factors if set.
+        /// </summary>
+        public string PersonalAccessToken { get; set; }
+
+        internal bool MissingPersonalAccessTokenVariables =>
+            string.IsNullOrWhiteSpace(PersonalAccessToken) ||
+            string.IsNullOrWhiteSpace(AccessUrl);
+
+        internal bool MissingSecretVariables =>
+            string.IsNullOrWhiteSpace(TokenUrl) ||
+            string.IsNullOrWhiteSpace(Username) ||
+            string.IsNullOrWhiteSpace(Password) ||
+            string.IsNullOrWhiteSpace(ClientId) ||
+            string.IsNullOrWhiteSpace(ClientSecret) ||
+            string.IsNullOrWhiteSpace(AccessUrl);
+
+        /// <summary>
         /// Checks if any of the required configuration values are missing
         /// </summary>
-        /// <returns>true if there is any configuration details missing, call <see cref="MissingConfig"/> to obtain details of the missing configuration details</returns>        
+        /// <returns>true if there is any configuration details missing, call <see cref="GetMissingConfig"/> to obtain details of the missing configuration details</returns>
         public bool HasMissingConfig()
         {
-            return string.IsNullOrEmpty(TokenUrl) ||
-                   string.IsNullOrEmpty(Username) ||
-                   string.IsNullOrEmpty(Password) ||
-                   string.IsNullOrEmpty(ClientId) ||
-                   string.IsNullOrEmpty(ClientSecret) ||
-                   string.IsNullOrEmpty(AccessUrl);
+            return MissingPersonalAccessTokenVariables && MissingSecretVariables;
         }
 
         /// <summary>
         /// Returns a list of the missing required configuration values
         /// </summary>
         /// <returns>List of missing configuration values or empty list if all configuration values are present</returns>
-        public List<string> MissingConfig()
+        public List<string> GetMissingConfig()
         {
             var missingConfig = new List<string>();
-            if (string.IsNullOrEmpty(TokenUrl))
+
+            if (!string.IsNullOrWhiteSpace(PersonalAccessToken))
+            {
+                if (MissingPersonalAccessTokenVariables)
+                {
+                    missingConfig.Add(nameof(AccessUrl));
+                }
+                return missingConfig; // in case PAC is to be used we don't care about the other properties
+            }
+
+            if (string.IsNullOrWhiteSpace(TokenUrl))
             {
                 missingConfig.Add(nameof(TokenUrl));
             }
-            if (string.IsNullOrEmpty(Username))
+
+            if (string.IsNullOrWhiteSpace(Username))
             {
                 missingConfig.Add(nameof(Username));
             }
-            if (string.IsNullOrEmpty(Password))
+
+            if (string.IsNullOrWhiteSpace(Password))
             {
                 missingConfig.Add(nameof(Password));
             }
-            if (string.IsNullOrEmpty(ClientId))
+
+            if (string.IsNullOrWhiteSpace(ClientId))
             {
                 missingConfig.Add(nameof(ClientId));
             }
-            if (string.IsNullOrEmpty(ClientSecret))
+
+            if (string.IsNullOrWhiteSpace(ClientSecret))
             {
                 missingConfig.Add(nameof(ClientSecret));
-            } 
-            if (string.IsNullOrEmpty(AccessUrl))
+            }
+
+            if (string.IsNullOrWhiteSpace(AccessUrl))
             {
                 missingConfig.Add(nameof(AccessUrl));
             }
-            return missingConfig;            
-        }
+
+            return missingConfig;
+        }  
     }
 }
