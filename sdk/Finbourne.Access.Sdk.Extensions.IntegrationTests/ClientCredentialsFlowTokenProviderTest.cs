@@ -9,9 +9,17 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
     [TestFixture]
     public class ClientCredentialsFlowTokenProviderTest
     {
+        private static readonly Lazy<ApiConfiguration> ApiConfig =
+            new Lazy<ApiConfiguration>(() => ApiConfigurationBuilder.Build("secrets.json"));
+
         [Test]
         public void GetAuthenticationHeaderAsync_Returns_NonNull()
         {
+            if (ApiConfig.Value.MissingSecretVariables)
+            {
+                Assert.Inconclusive();
+            }
+
             var tokenProvider = new ClientCredentialsFlowTokenProvider(ApiConfigurationBuilder.Build("secrets.json"));
             Task<AuthenticationHeaderValue> result = tokenProvider.GetAuthenticationHeaderAsync();
             result.Wait();
@@ -21,6 +29,11 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
         [Test]
         public void GetAuthenticationTokenAsync_Returns_NonNull()
         {
+            if (ApiConfig.Value.MissingSecretVariables)
+            {
+                Assert.Inconclusive();
+            }
+
             var tokenProvider = new ClientCredentialsFlowTokenProvider(ApiConfigurationBuilder.Build("secrets.json"));
             Task<string> result = tokenProvider.GetAuthenticationTokenAsync();
             result.Wait();
@@ -30,6 +43,11 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
         [Test]
         public void GetLastToken_Returns_NonNull()
         {
+            if (ApiConfig.Value.MissingSecretVariables)
+            {
+                Assert.Inconclusive();
+            }
+
             var tokenProvider = new ClientCredentialsFlowTokenProvider(ApiConfigurationBuilder.Build("secrets.json"));
             Task<string> result = tokenProvider.GetAuthenticationTokenAsync();
             result.Wait();
@@ -40,6 +58,11 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
         [Test]
         public void GetLastToken_RefreshExpiresOn_Has_Expired_After_ExpireRefreshToken_Called()
         {
+            if (ApiConfig.Value.MissingSecretVariables)
+            {
+                Assert.Inconclusive();
+            }
+
             var tokenProvider = new ClientCredentialsFlowTokenProvider(ApiConfigurationBuilder.Build("secrets.json"));
             Task<string> result = tokenProvider.GetAuthenticationTokenAsync();
             result.Wait();
@@ -51,6 +74,11 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
         [Test]
         public void GetLastToken_ExpiresOn_Has_Expired_After_ExpireToken_Called()
         {
+            if (ApiConfig.Value.MissingSecretVariables)
+            {
+                Assert.Inconclusive();
+            }
+
             var tokenProvider = new ClientCredentialsFlowTokenProvider(ApiConfigurationBuilder.Build("secrets.json"));
             Task<string> result = tokenProvider.GetAuthenticationTokenAsync();
             result.Wait();
