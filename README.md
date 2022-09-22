@@ -22,3 +22,4 @@ $ dotnet add package Finbourne.Access.Sdk.Extensions
 | branch | status |
 | --- | --- |
 | `master` | ![Nuget](https://img.shields.io/nuget/v/Finbourne.Access.Sdk.Extensions?color=blue) [![Build and test](https://github.com/finbourne/access-sdk-extensions-csharp/actions/workflows/build-and-test.yaml/badge.svg)](https://github.com/finbourne/access-sdk-extensions-csharp/actions/workflows/build-and-test.yaml) |
+
