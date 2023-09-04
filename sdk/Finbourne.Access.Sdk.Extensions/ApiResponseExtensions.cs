@@ -11,7 +11,7 @@ namespace Finbourne.Access.Sdk.Extensions
         /// <summary>
         /// The header that the request id is contained within.
         /// </summary>
-        public const string RequestIdHeader = "shrine-meta-requestid";
+        public const string RequestIdHeader = "shrine-meta-requestId";
         
         /// <summary>
         /// The header that the Date Time Offset is contained within.
