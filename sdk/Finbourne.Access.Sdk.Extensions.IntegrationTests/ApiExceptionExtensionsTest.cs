@@ -67,7 +67,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
             {
                 //    ApiException.ErrorContent contains a JSON serialized ErrorResponse
                 LusidProblemDetails errorResponse = e.ProblemDetails();
-                Assert.That(errorResponse.Detail, Does.Match("One or more of the bits of input data provided were not valid.*"));
+                Assert.That(errorResponse.Detail, Is.EqualTo("One or more elements of the request were invalid. Please check that all supplied identifiers are valid and of the correct format, and that all provided data is correctly structured."));
             }
         }
 
@@ -102,16 +102,16 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
                 //    An ApiException.ErrorContent thrown because of a request validation contains a JSON serialized LusidValidationProblemDetails
                 if (e.TryGetValidationProblemDetails(out var errorResponse))
                 {
-                    //Should identify that there was a validation error with the code
+                    //Should identify that there was a validation error with the code: Value must follow pattern ^(?=.*[a-zA-Z])[\w][\w +-]{2,100}$
                     Assert.That(errorResponse.Errors, Contains.Key("code"));
-                    Assert.That(errorResponse.Errors["code"].Single(), Is.EqualTo("Values for this field must be non-zero in length and be comprised of either alphanumeric characters, hyphens or underscores. For more information please consult the LUSID documentation."));
+                    Assert.That(errorResponse.Errors["code"].Single(), Is.EqualTo("Values for the field code must be comprised of either alphanumeric characters, hyphens or underscores. For more information please consult the documentation."));
 
-                    //Should identify that there was a validation error with the scope
+                    //Should identify that there was a validation error with the scope: Value must follow pattern ^(?=.*[a-zA-Z])[\w][\w +-]{2,100}$
                     Assert.That(errorResponse.Errors, Contains.Key("scope"));
-                    Assert.That(errorResponse.Errors["scope"].Single(), Is.EqualTo("Values for this field must be non-zero in length and be comprised of either alphanumeric characters, hyphens or underscores. For more information please consult the LUSID documentation."));
+                    Assert.That(errorResponse.Errors["scope"].Single(), Is.EqualTo("Values for the field scope must be comprised of either alphanumeric characters, hyphens or underscores. For more information please consult the documentation."));
 
-                    Assert.That(errorResponse.Detail, Does.Match("One or more of the bits of input data provided were not valid.*"));
-                    Assert.That(errorResponse.Name, Is.EqualTo("InvalidParameterValue"));
+                    Assert.That(errorResponse.Detail, Does.Match("One or more elements of the request were invalid.*"));
+                    Assert.That(errorResponse.Name, Is.EqualTo("InvalidRequestFailure"));
                 }
                 else
                 {
@@ -136,16 +136,16 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
                 //    An ApiException.ErrorContent thrown because of a request validation contains a JSON serialized LusidValidationProblemDetails
                 if (e.TryGetValidationProblemDetails(out var errorResponse))
                 {
-                    //Should identify that there was a validation error with the code
+                    //Should identify that there was a validation error with the code: Value must follow pattern ^(?=.*[a-zA-Z])[\w][\w +-]{2,100}$
                     Assert.That(errorResponse.Errors, Contains.Key("code"));
-                    Assert.That(errorResponse.Errors["code"].Single(), Is.EqualTo("Supplied text value was too long to be valid"));
+                    Assert.That(errorResponse.Errors["code"].Single(), Is.EqualTo("Values for the field code must be comprised of either alphanumeric characters, hyphens or underscores. For more information please consult the documentation."));
 
-                    //Should identify that there was a validation error with the scope
+                    //Should identify that there was a validation error with the scope: Value must follow pattern ^(?=.*[a-zA-Z])[\w][\w +-]{2,100}$
                     Assert.That(errorResponse.Errors, Contains.Key("scope"));
-                    Assert.That(errorResponse.Errors["scope"].Single(), Is.EqualTo("Supplied text value was too long to be valid"));
+                    Assert.That(errorResponse.Errors["scope"].Single(), Is.EqualTo("Values for the field scope must be comprised of either alphanumeric characters, hyphens or underscores. For more information please consult the documentation."));
 
-                    Assert.That(errorResponse.Detail, Does.Match("One or more of the bits of input data provided were not valid.*"));
-                    Assert.That(errorResponse.Name, Is.EqualTo("InvalidParameterValue"));
+                    Assert.That(errorResponse.Detail, Does.Match("One or more elements of the request were invalid.*"));
+                    Assert.That(errorResponse.Name, Is.EqualTo("InvalidRequestFailure"));
                 }
                 else
                 {
