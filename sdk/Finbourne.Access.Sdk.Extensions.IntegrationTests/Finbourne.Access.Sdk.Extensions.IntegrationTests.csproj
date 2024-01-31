@@ -11,7 +11,7 @@
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Finbourne.Access.Sdk.Preview" Version="0.0.3654" />
+    <PackageReference Include="Finbourne.Access.Sdk.Preview" Version="0.0.3655" />
     <PackageReference Include="NUnit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
