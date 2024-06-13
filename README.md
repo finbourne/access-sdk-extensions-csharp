@@ -1,5 +1,6 @@
+![LUSID_by_Finbourne](./resources/Finbourne_Logo_Teal.svg)
+
 # LUSID<sup>®</sup> Access SDK Extensions C#
-![LUSID by Finbourne](https://content.finbourne.com/LUSID_repo.png)
 
 These are the C# SDK Extensions to accompany the [C# SDK (Preview) for the Access application](https://github.com/finbourne/access-sdk-csharp-preview). The application provides access control for LUSID in conjunction with the [Identity](https://github.com/finbourne/identity-sdk-csharp-preview) application.
 
