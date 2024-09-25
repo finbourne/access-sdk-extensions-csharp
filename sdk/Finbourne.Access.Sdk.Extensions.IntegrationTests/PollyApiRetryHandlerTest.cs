@@ -87,7 +87,7 @@ namespace Finbourne.Access.Sdk.Extensions.IntegrationTests
 
             RetryConfiguration.RetryPolicy = PollyApiRetryHandler.DefaultRetryPolicyWithFallback;
 
-            var sdkResponse = _apiFactory.Api<IRolesApi>().GetRole("code", DateTimeOffset.UtcNow.AddDays(-1), "scope");
+            var sdkResponse = _apiFactory.Api<IRolesApi>().GetRole("code", "scope");
 
             // Api call should be just called once
             Assert.That(_apiCallCount, Is.EqualTo(expectedNumberOfApiCalls));
